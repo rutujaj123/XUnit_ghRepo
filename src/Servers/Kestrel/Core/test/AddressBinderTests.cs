@@ -79,28 +79,39 @@ public class AddressBinderTests
     }
 
     [Fact]
+    public void ParseAddress_HasPipeNoSlash()
+    {
+        var listenOptions = AddressBinder.ParseAddress("http://pipe:8080", out var https);
+        Assert.IsType<IPEndPoint>(listenOptions.EndPoint);
+        Assert.Equal(8080, listenOptions.IPEndPoint.Port);
+        Assert.False(https);
+    }
+
+    [Fact]
     public void ParseAddressNamedPipe()
     {
-        var listenOptions = AddressBinder.ParseAddress("http://pipe:HelloWorld", out var https);
+        var listenOptions = AddressBinder.ParseAddress("http://pipe:/HelloWorld", out var https);
         Assert.IsType<NamedPipeEndPoint>(listenOptions.EndPoint);
         Assert.Equal("HelloWorld", listenOptions.PipeName);
         Assert.False(https);
     }
 
     [Fact]
-    public void ParseAddressNamedPipe_ForwardSlashes()
+    public void ParseAddressNamedPipe_BackSlashes()
     {
-        var listenOptions = AddressBinder.ParseAddress("http://pipe:/tmp/kestrel-test.sock", out var https);
+        var listenOptions = AddressBinder.ParseAddress(@"http://pipe:/LOCAL\HelloWorld", out var https);
         Assert.IsType<NamedPipeEndPoint>(listenOptions.EndPoint);
-        Assert.Equal("/tmp/kestrel-test.sock", listenOptions.PipeName);
+        Assert.Equal(@"LOCAL\HelloWorld", listenOptions.PipeName);
         Assert.False(https);
     }
 
     [Fact]
-    public void ParseAddressNamedPipe_ErrorFromBackslash()
+    public void ParseAddressNamedPipe_ForwardSlashes()
     {
-        var ex = Assert.Throws<FormatException>(() => AddressBinder.ParseAddress(@"http://pipe:this\is\invalid", out var https));
-        Assert.Equal(@"Invalid url, pipe name must not contain backslashes: 'http://pipe:this\is\invalid'", ex.Message);
+        var listenOptions = AddressBinder.ParseAddress("http://pipe://tmp/kestrel-test.sock", out var https);
+        Assert.IsType<NamedPipeEndPoint>(listenOptions.EndPoint);
+        Assert.Equal("/tmp/kestrel-test.sock", listenOptions.PipeName);
+        Assert.False(https);
     }
 
     [ConditionalFact]

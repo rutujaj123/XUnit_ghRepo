@@ -122,7 +122,7 @@ internal sealed class AddressBinder
         }
         else if (parsedAddress.IsNamedPipe)
         {
-            options = new ListenOptions(new NamedPipeEndPoint(parsedAddress.NamedPipePath));
+            options = new ListenOptions(new NamedPipeEndPoint(parsedAddress.NamedPipeName));
         }
         else if (string.Equals(parsedAddress.Host, "localhost", StringComparison.OrdinalIgnoreCase))
         {

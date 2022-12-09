@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Http;
 public class BindingAddress
 {
     private const string UnixPipeHostPrefix = "unix:/";
-    private const string NamedPipeHostPrefix = "pipe:";
+    private const string NamedPipeHostPrefix = "pipe:/";
 
     private BindingAddress(string host, string pathBase, int port, string scheme)
     {
@@ -61,7 +61,7 @@ public class BindingAddress
     /// <summary>
     /// Gets a value that determines if this instance represents a named pipe.
     /// <para>
-    /// Returns <see langword="true"/> if <see cref="Host"/> starts with <c>pipe:</c> prefix.
+    /// Returns <see langword="true"/> if <see cref="Host"/> starts with <c>pipe:/</c> prefix.
     /// </para>
     /// </summary>
     public bool IsNamedPipe => Host.StartsWith(NamedPipeHostPrefix, StringComparison.Ordinal);
@@ -83,9 +83,9 @@ public class BindingAddress
     }
 
     /// <summary>
-    /// Gets the named pipe path if this instance represents a named pipe.
+    /// Gets the named pipe name if this instance represents a named pipe.
     /// </summary>
-    public string NamedPipePath
+    public string NamedPipeName
     {
         get
         {
@@ -94,7 +94,7 @@ public class BindingAddress
                 throw new InvalidOperationException("Binding address is not a named pipe.");
             }
 
-            return GetNamedPipePath(Host);
+            return GetNamedPipeName(Host);
         }
     }
 
@@ -109,7 +109,7 @@ public class BindingAddress
         return host.Substring(unixPipeHostPrefixLength);
     }
 
-    private static string GetNamedPipePath(string host) => host.Substring(NamedPipeHostPrefix.Length);
+    private static string GetNamedPipeName(string host) => host.Substring(NamedPipeHostPrefix.Length);
 
     /// <inheritdoc />
     public override string ToString()
@@ -246,11 +246,6 @@ public class BindingAddress
         if (isUnixPipe && !Path.IsPathRooted(GetUnixPipePath(host)))
         {
             throw new FormatException($"Invalid url, unix socket path must be absolute: '{address}'");
-        }
-
-        if (isNamedPipe && GetNamedPipePath(host).Contains('\\'))
-        {
-            throw new FormatException($"Invalid url, pipe name must not contain backslashes: '{address}'");
         }
 
         string pathBase;
