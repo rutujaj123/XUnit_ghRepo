@@ -81,6 +81,8 @@ public class AddressBinderTests
     [Fact]
     public void ParseAddress_HasPipeNoSlash()
     {
+        // Pipe prefix is missing slash here and so the address is parsed as an IP.
+        // The slash is required to differentiate between a pipe and a hostname.
         var listenOptions = AddressBinder.ParseAddress("http://pipe:8080", out var https);
         Assert.IsType<IPEndPoint>(listenOptions.EndPoint);
         Assert.Equal(8080, listenOptions.IPEndPoint.Port);
