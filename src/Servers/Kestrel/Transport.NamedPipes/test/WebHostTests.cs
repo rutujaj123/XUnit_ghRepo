@@ -287,7 +287,7 @@ public class WebHostTests : LoggedTest
         // Arrange
         using var httpEventSource = new HttpEventSourceListener(LoggerFactory);
         var pipeName = NamedPipeTestHelpers.GetUniquePipeName();
-        var url = $"http://pipe:{pipeName}";
+        var url = $"http://pipe:/{pipeName}";
 
         var builder = new HostBuilder()
             .ConfigureWebHost(webHostBuilder =>

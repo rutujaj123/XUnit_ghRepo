@@ -90,28 +90,34 @@ public class AddressBinderTests
     [Fact]
     public void ParseAddressNamedPipe()
     {
-        var listenOptions = AddressBinder.ParseAddress("http://pipe:/HelloWorld", out var https);
+        var address = "http://pipe:/HelloWorld";
+        var listenOptions = AddressBinder.ParseAddress(address, out var https);
         Assert.IsType<NamedPipeEndPoint>(listenOptions.EndPoint);
         Assert.Equal("HelloWorld", listenOptions.PipeName);
         Assert.False(https);
+        Assert.Equal(address, listenOptions.GetDisplayName());
     }
 
     [Fact]
     public void ParseAddressNamedPipe_BackSlashes()
     {
-        var listenOptions = AddressBinder.ParseAddress(@"http://pipe:/LOCAL\HelloWorld", out var https);
+        var address = @"http://pipe:/LOCAL\HelloWorld";
+        var listenOptions = AddressBinder.ParseAddress(address, out var https);
         Assert.IsType<NamedPipeEndPoint>(listenOptions.EndPoint);
         Assert.Equal(@"LOCAL\HelloWorld", listenOptions.PipeName);
         Assert.False(https);
+        Assert.Equal(address, listenOptions.GetDisplayName());
     }
 
     [Fact]
     public void ParseAddressNamedPipe_ForwardSlashes()
     {
-        var listenOptions = AddressBinder.ParseAddress("http://pipe://tmp/kestrel-test.sock", out var https);
+        var address = "http://pipe://tmp/kestrel-test.sock";
+        var listenOptions = AddressBinder.ParseAddress(address, out var https);
         Assert.IsType<NamedPipeEndPoint>(listenOptions.EndPoint);
         Assert.Equal("/tmp/kestrel-test.sock", listenOptions.PipeName);
         Assert.False(https);
+        Assert.Equal(address, listenOptions.GetDisplayName());
     }
 
     [ConditionalFact]

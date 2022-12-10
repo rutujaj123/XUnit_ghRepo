@@ -153,7 +153,7 @@ public class ListenOptions : IConnectionBuilder, IMultiplexedConnectionBuilder
             case UnixDomainSocketEndPoint _:
                 return $"{Scheme}://unix:{EndPoint}";
             case NamedPipeEndPoint namedPipeEndPoint:
-                return $"{Scheme}://pipe:{namedPipeEndPoint.PipeName}";
+                return $"{Scheme}://pipe:/{namedPipeEndPoint.PipeName}";
             case FileHandleEndPoint _:
                 return $"{Scheme}://<file handle>";
             default:
